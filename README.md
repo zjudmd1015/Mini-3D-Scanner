@@ -56,7 +56,7 @@ The image above shows how effective this algorithm is. The left only used ICP wi
         3. When local registration is successful, regiter it into the base cloud
         4. Repetitive do step 2 and step 3 after a complete model is generated
     - output: compelete point cloud rendered model of objects
-- [Visualization (PCL, C++)](showRegResultOnline.cpp)
+- [Visualization (PCL, C++)](./src/showRegResultOnline.cpp)
     - input: compelete point cloud rendered model of objects
         - Update the visualization window step by step, showing the process of point cloud registration
 
