@@ -22,14 +22,12 @@ main (int argc, char **argv)
     sensor_msgs::PointCloud2 output;
     pcl::PointCloud<PointT>::Ptr cloud_ptr (new pcl::PointCloud<PointT>);
 
-    std::string dir = "/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/temp/test_tide_downview_less/uncropped/";
+    std::string dir = "/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/test_kyrie/diffCloud/";
     int cloud_index = start_index;
     std::string filename = dir + std::to_string(cloud_index) + ".pcd";
 
-// test
-    // filename = "/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/registerAll.pcd";
 
-    ros::Rate loop_rate(2);
+    ros::Rate loop_rate(0.5);
     while (ros::ok())
     {
         filename = dir + std::to_string(cloud_index) + ".pcd";

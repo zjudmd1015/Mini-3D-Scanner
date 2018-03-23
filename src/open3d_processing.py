@@ -23,8 +23,6 @@ class registerMulti:
 
     def callback(self, num):
         self.cloud_index = num.data
-        # if self.cloud_index == 12:
-            # write_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/result/registerResult.pcd", self.cloud_base ,write_ascii = False)
         self.registering()
 
     def registering(self):
@@ -37,13 +35,6 @@ class registerMulti:
 
             self.cloud2 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index))
             # self.cloud1 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index-1))
-
-
-            # self.cloud2 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/test_kyrie/diffCloud/{}.pcd".format(self.cloud_index+13))
-#This works
-            # self.cloud1 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/test_kyrie/diffCloud/{}.pcd".format(self.cloud_index+12))
-            # print(self.cloud1)   // for data type check
-            # print(self.cloud2)
 
             # get local transformation between two lastest clouds
             # source_temp = copy.deepcopy(self.cloud2)
@@ -61,40 +52,26 @@ class registerMulti:
                 # print(self.detectTransLoop)
                 # print ("==== ==== ==== ==== ==== ====")
                 self.posWorldTrans =  np.dot(self.posWorldTrans, self.posLocalTrans)
+                # update latest cloud
                 self.cloud1 = copy.deepcopy(self.cloud2)
                 self.cloud2.transform(self.posWorldTrans)
                 self.cloud_base = self.cloud_base + self.cloud2
 
-# for test
-                # cloud_temp = self.cloud1 + self.cloud2
-
                 # downsampling
                 self.cloud_base = voxel_down_sample(self.cloud_base ,0.001)
 
-
-                # update latest cloud
-                # self.cloud1 = copy.deepcopy(self.cloud2)
-######## It Sucks...
-# seems wrong here
-
-                # self.cloud1 = copy.deepcopy(self.cloud2)
-
-                # save PCD file to local
                 self.registrationCount += 1
+                # save PCD file to local
                 write_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/result/registerResult.pcd", self.cloud_base ,write_ascii = False)
-                # write_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/result/registerResult_{}.pcd".format(self.registrationCount), cloud_temp ,write_ascii = False)
+
             else:
                 pass
 
         # the first cloud
         else:
             self.cloud_base = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index))
-#### test
             self.cloud1 = copy.deepcopy(self.cloud_base)
 
-# this is another frame with cloud1
-            # self.cloud_base = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/test_kyrie/diffCloud/{}.pcd".format(self.cloud_index+13))
-            # self.cloud1 = copy.deepcopy(self.cloud_base)
             self.initFlag = False
 
     def registerLocalCloud(self, target, source):
@@ -137,7 +114,7 @@ class registerMulti:
         print("Colored point cloud registration")
 
 ################
-#### test
+#### testing registration
 ################
         # voxel_radius = [ 0.004,0.001 ];
         # max_iter = [ 50, 30 ];
@@ -156,8 +133,7 @@ class registerMulti:
         #         ICPConvergenceCriteria(relative_fitness = 1e-6,
         #         relative_rmse = 1e-6, max_iteration = iter))
         #     current_transformation = result_icp.transformation
-####
-#### Notes: keypoint might be radius parameter
+
 #################
 ##### original one
 #################
@@ -168,7 +144,6 @@ class registerMulti:
 #################
 #################
 #################
-
 
 
         # result_icp = registration_colored_icp(source, target,
@@ -195,7 +170,7 @@ class registerMulti:
 
         # print(result_icp.correspondence_set)
 ######################################
-#####   original rule
+#####   original kick-out rule
 ######################################
         # self.goodResultFlag = True
         # if (result_icp.fitness < 0.9 * result_icp_p2l.fitness):

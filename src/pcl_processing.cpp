@@ -92,42 +92,31 @@ cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud)
     pcl::PassThrough<PointT> passz;
     passz.setInputCloud (cloud);
     passz.setFilterFieldName ("z");
-    // passz.setFilterLimits (0.8, 1.0);
     passz.setFilterLimits (0.75, 1.0);
 
 
-    // passz.setFilterLimits (0.0, 2.0);
+    // passz.setFilterLimits (-2.0, 4.0);
     //pass.setFilterLimitsNegative (true);
     passz.filter (*cloud_filtered);
 
     pcl::PassThrough<PointT> passy;
     passy.setInputCloud (cloud_filtered);
     passy.setFilterFieldName ("y");
-    // passy.setFilterLimits (-0.2, 0.08);
     passy.setFilterLimits (-0.1, 0.22);
 
-    // passy.setFilterLimits (-1.0, 1.0);
+    // passy.setFilterLimits (-2.0, 2.0);
     //pass.setFilterLimitsNegative (true);
     passy.filter (*cloud_filtered);
 
     pcl::PassThrough<PointT> passx;
     passx.setInputCloud (cloud_filtered);
     passx.setFilterFieldName ("x");
-    // passx.setFilterLimits (-0.2, 0.2);
     passx.setFilterLimits (-0.18, 0.18);
 
-    // passx.setFilterLimits (-1.0, 1.0);
+    // passx.setFilterLimits (-3.0, 3.0);
     //pass.setFilterLimitsNegative (true);
     passx.filter (*cloud_filtered);
   //****************************************************//
-
-
-
-  //****************************************************//
-
-
-
-
 
 
 
@@ -152,8 +141,8 @@ cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud)
     extract.setIndices(inliers);
     extract.setNegative(true);
     extract.filter(*cloud_filtered);
-
   //****************************************************//
+
 
   //****************************************************//
     // Create the filtering object - StatisticalOutlierRemoval filter

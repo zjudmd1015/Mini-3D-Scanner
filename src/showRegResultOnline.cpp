@@ -15,8 +15,6 @@ typedef pcl::PointXYZRGBA PointT;
 // ***********************
 // ******** PCLVisualizer
 // ***********************
-
-
 int
 main (int argc, char **argv)
 {
