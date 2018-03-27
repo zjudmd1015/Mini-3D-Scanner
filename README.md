@@ -92,4 +92,4 @@ Tips:
 
 ## Demo
 
-Demo Video in Youtube: [3D-Scanner](https://youtu.be/ndyv_QmFSPA)
+Demo Video in Youtube: [3D-Scanner](https://youtu.be/WLWoPsRvhPE)
