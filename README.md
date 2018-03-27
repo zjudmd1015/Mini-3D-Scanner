@@ -82,8 +82,9 @@ Tips:
 
 #### Software
 
-- ROS
-- catkin tools (I use catkin_build to build this ROS package)
+- [ROS](http://www.ros.org/)
+- catkin_tools (use `catkin build` to build this ROS package)
+- [iai_kinect2](https://github.com/code-iai/iai_kinect2) (ROS package as driver for Kinect V2)
 - PCL1.7.2 (C++)
 - Open3D (Python)
 - numpy (Python)
@@ -91,4 +92,4 @@ Tips:
 
 ## Demo
 
-#### To be updated soon.
+Demo Video in Youtube: [3D-Scanner](https://youtu.be/ndyv_QmFSPA)
