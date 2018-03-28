@@ -89,6 +89,10 @@ Tips:
 - Open3D (Python)
 - numpy (Python)
 
+Intsructions for use:
+1. In a ROS environment, command `$ roslaunch kinect_bridge kinect_bridge.launch` to connect Kinect V2 thtough *iai_kinect2*;
+2. Command `$ roslaunch scanner pipeline.launch` to run the pipeline.
+3. Intermediate PCD files are saved in **./data/** folder, and the final reconstruction PCD file is in **./data/result/** folder.
 
 ## Demo
 
