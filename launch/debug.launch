@@ -1,0 +1,10 @@
+<launch>
+
+    <node name="pcl_processing" pkg="scanner" type="pcl_processing" launch-prefix = "xterm -e" output = "screen"/>
+    <node name="open3d_processing" pkg="scanner" type="open3d_processing.py" launch-prefix = "xterm -e" output = "screen" />
+
+    <node name="showRegResultOnline" pkg="scanner" type="showRegResultOnline" respawn="true"/>
+
+
+</launch>
+

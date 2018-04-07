@@ -41,3 +41,6 @@ target_link_libraries(kinect2_emulator ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(showRegResultOnline src/showRegResultOnline.cpp)
 target_link_libraries(showRegResultOnline ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(setup src/setup.cpp)
+target_link_libraries(setup ${catkin_LIBRARIES} ${PCL_LIBRARIES})

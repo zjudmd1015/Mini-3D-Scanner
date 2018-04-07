@@ -21,7 +21,7 @@ main (int argc, char **argv)
     ros::init (argc, argv, "showRegResultOnline");
     ros::NodeHandle nh;
 
-    std::string filename = "/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/result/registerResult.pcd";
+    std::string filename = "/home/dylan2/catkin_ws/src/scanner/data/result/registerResult.pcd";
     pcl::PointCloud<PointT>::Ptr cloud_ptr (new pcl::PointCloud<PointT>);
 
     // set up visualizer

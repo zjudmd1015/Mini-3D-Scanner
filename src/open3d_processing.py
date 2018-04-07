@@ -33,7 +33,7 @@ class registerMulti:
             print("Have registered {} clouds;".format(self.registrationCount))
             print("Processing cloud {}...".format(self.cloud_index))
 
-            self.cloud2 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index))
+            self.cloud2 = read_point_cloud("/home/dylan2/catkin_ws/src/scanner/data/{}.pcd".format(self.cloud_index))
             # self.cloud1 = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index-1))
 
             # get local transformation between two lastest clouds
@@ -62,14 +62,14 @@ class registerMulti:
 
                 self.registrationCount += 1
                 # save PCD file to local
-                write_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/result/registerResult.pcd", self.cloud_base ,write_ascii = False)
+                write_point_cloud("/home/dylan2/catkin_ws/src/scanner/data/result/registerResult.pcd", self.cloud_base ,write_ascii = False)
 
             else:
                 pass
 
         # the first cloud
         else:
-            self.cloud_base = read_point_cloud("/home/dylan2/catkin_ws/src/temp/pointCloudInRviz/data/{}.pcd".format(self.cloud_index))
+            self.cloud_base = read_point_cloud("/home/dylan2/catkin_ws/src/scanner/data/{}.pcd".format(self.cloud_index))
             self.cloud1 = copy.deepcopy(self.cloud_base)
 
             self.initFlag = False

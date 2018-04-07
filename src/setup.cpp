@@ -15,10 +15,12 @@
 #include <pcl/filters/extract_indices.h>
 
 #include <Eigen/Eigen>
+#include <pcl/visualization/pcl_visualizer.h>
 
 typedef pcl::PointXYZRGBA PointT;
-static int pcd_index = 0;
-static char gotDataFlag = 0;// could use a 'class' to reduce this global variable
+// static int pcd_index = 0;
+// static char gotDataFlag = 0;// could use a 'class' to reduce this global variable
+static pcl::PointCloud<PointT>::Ptr cloud_ptr (new pcl::PointCloud<PointT>);
 
 pcl::PointCloud<PointT>::Ptr
 cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud);
@@ -28,10 +30,9 @@ callback(sensor_msgs::PointCloud2 cloud_raw)
 {
     // cloud_raw is PC data from Kinect V2;
     // static int pcd_index = 0;
-    pcl::PointCloud<PointT>::Ptr cloud_ptr (new pcl::PointCloud<PointT>);
-    std::string filename = "/home/dylan2/catkin_ws/src/scanner/data/" + std::to_string(pcd_index) + ".pcd";
 
-    ROS_INFO("Processing #%i PointCloud...", pcd_index);
+
+    ROS_INFO("Setuping...");
 
     // change PC format from PointCloud2 to pcl::PointCloud<PointT>
     pcl::fromROSMsg(cloud_raw, *cloud_ptr);
@@ -39,44 +40,35 @@ callback(sensor_msgs::PointCloud2 cloud_raw)
     // crop, segment, filter
     cloud_ptr = cloud_filter(cloud_ptr);
 
-    // save PCD file to local folder
-    pcl::io::savePCDFileBinary (filename, *cloud_ptr);
-
-    gotDataFlag = 1;
-    ++pcd_index;
 }
 
 
 int
 main (int argc, char **argv)
 {
-    ros::init (argc, argv, "pcl_processing");
+    ros::init (argc, argv, "setup_scanner");
 
     ros::NodeHandle nh; // can sub and pub use the same NodeHandle?
     ros::Subscriber sub = nh.subscribe("/kinect2/qhd/points", 1 , callback);
-    ros::Publisher pub = nh.advertise<std_msgs::Int64> ("pcd_save_done", 1);
+    // ros::Publisher pub = nh.advertise<std_msgs::Inst64> ("pcd_save_done", 1);
 
-    ros::Rate loop_rate(1);
-    std_msgs::Int64 number_PCDdone;
-    // std::stringstream ss;
-    while (ros::ok())
+    // set up visualizer
+    pcl::visualization::PCLVisualizer viewer("viewer");
+    viewer.setBackgroundColor (0, 0, 0);
+    viewer.addCoordinateSystem (0.5);
+    viewer.setCameraPosition(0,0,-3.0,0,-1,0);
+    viewer.initCameraParameters ();
+
+    viewer.addPointCloud<PointT> (cloud_ptr, "wholeCloud");
+
+    // ros::Rate loop_rate(10);
+    while (ros::ok()  && !viewer.wasStopped())
     {
-        /* Do something? */
-        // ss.str("");
-        // ss << "have saved pcd #" << pcd_index ;
-        // msg.data = ss.str();
-        number_PCDdone.data = pcd_index;
+        viewer.spinOnce(50);
+        viewer.updatePointCloud( cloud_ptr, "wholeCloud" );
 
-        // ros::spin()
-        //*** only when this is run, it will get to callback
         ros::spinOnce();
-
-        // only publish data when having got data
-        if (gotDataFlag == 1){
-            pub.publish(number_PCDdone);
-            gotDataFlag = 0;
-        }
-        loop_rate.sleep();
+        // loop_rate.sleep();
     }
     return 0;
 }
