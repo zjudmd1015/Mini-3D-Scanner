@@ -96,4 +96,4 @@ Intsructions for use:
 
 ## Demo
 
-Demo Video in Youtube: [3D-Scanner](https://youtu.be/WLWoPsRvhPE)
+Demo Video in Youtube: [Mini 3D-Scanner](https://youtu.be/WLWoPsRvhPE)
