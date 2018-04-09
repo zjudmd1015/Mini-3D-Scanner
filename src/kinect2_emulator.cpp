@@ -27,7 +27,7 @@ main (int argc, char **argv)
     std::string filename = dir + std::to_string(cloud_index) + ".pcd";
 
 
-    ros::Rate loop_rate(0.5);
+    ros::Rate loop_rate(2);
     while (ros::ok())
     {
         filename = dir + std::to_string(cloud_index) + ".pcd";

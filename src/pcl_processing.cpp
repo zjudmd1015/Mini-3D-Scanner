@@ -93,7 +93,7 @@ cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud)
     passz.setInputCloud (cloud);
     passz.setFilterFieldName ("z");
     passz.setFilterLimits (0.75, 1.0);
-
+    // passz.setFilterLimits (0.5, 1.5);
 
     // passz.setFilterLimits (-2.0, 4.0);
     //pass.setFilterLimitsNegative (true);
@@ -103,6 +103,7 @@ cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud)
     passy.setInputCloud (cloud_filtered);
     passy.setFilterFieldName ("y");
     passy.setFilterLimits (-0.1, 0.22);
+    // passy.setFilterLimits (-0.5, 0.5);
 
     // passy.setFilterLimits (-2.0, 2.0);
     //pass.setFilterLimitsNegative (true);
@@ -112,6 +113,7 @@ cloud_filter(pcl::PointCloud<PointT>::Ptr &cloud)
     passx.setInputCloud (cloud_filtered);
     passx.setFilterFieldName ("x");
     passx.setFilterLimits (-0.18, 0.18);
+    // passx.setFilterLimits (-0.5, 0.5);
 
     // passx.setFilterLimits (-3.0, 3.0);
     //pass.setFilterLimitsNegative (true);

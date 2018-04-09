@@ -1,5 +1,7 @@
 <launch>
 
+    <node name="rotation_dir" pkg="scanner" type="rotation_dir" />
+
     <node name="pcl_processing" pkg="scanner" type="pcl_processing" />
     <node name="open3d_processing" pkg="scanner" type="open3d_processing.py" />
 

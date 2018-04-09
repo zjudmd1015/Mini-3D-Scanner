@@ -44,3 +44,9 @@ target_link_libraries(showRegResultOnline ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(setup src/setup.cpp)
 target_link_libraries(setup ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+add_executable(rotation_dir src/rotation_dir.cpp)
+target_link_libraries(rotation_dir ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+
+
+

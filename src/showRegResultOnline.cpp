@@ -36,7 +36,7 @@ main (int argc, char **argv)
 
     viewer.addPointCloud<PointT> (cloud_ptr, "wholeCloud");
 
-    ros::Rate loop_rate(0.5);
+    ros::Rate loop_rate(2);
     loop_rate.sleep();              // sleep two second at the beginning
     ros::Rate loop_rate_runtime(2);
 
@@ -50,7 +50,7 @@ main (int argc, char **argv)
        // std::cout << (cloud_ptr->size()) << endl;
         if (cloud_ptr->size() < 66) continue;
 
-        viewer.spinOnce(500);
+        viewer.spinOnce(777);
         // viewer.spin();
         viewer.updatePointCloud( cloud_ptr, "wholeCloud" );
         // viewer.setCameraPosition(0,-0.5,1.0,0,0,-1);

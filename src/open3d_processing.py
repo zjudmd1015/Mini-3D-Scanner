@@ -6,6 +6,14 @@ import copy
 from py3d import *
 
 from std_msgs.msg import Int64
+from geometry_msgs.msg import Vector3
+
+import sys
+import os
+current_path = os.path.dirname(__file__)
+module_path = os.path.join(current_path, '../lib')
+sys.path.append(module_path)
+from modern_robotics import MatrixLog3, so3ToVec, AxisAng3
 
 
 class registerMulti:
@@ -21,9 +29,17 @@ class registerMulti:
 # queue_size should be a little bit big, cause processing speed is not quick enough
         self.sub = rospy.Subscriber("pcd_save_done", Int64, self.callback, queue_size = 10)
 
+        self.rotation_dir = Vector3()
+        self.rotation_dir_init_flag = False
+        self.sub_rotation_dir = rospy.Subscriber("plane_normal", Vector3, self.callback_dir, queue_size = 10)
+
     def callback(self, num):
         self.cloud_index = num.data
         self.registering()
+
+    def callback_dir(self, temp_dir):
+        self.rotation_dir = temp_dir
+        self.rotation_dir_init_flag = True
 
     def registering(self):
         # print(self.initFlag)
@@ -71,8 +87,9 @@ class registerMulti:
         else:
             self.cloud_base = read_point_cloud("/home/dylan2/catkin_ws/src/scanner/data/{}.pcd".format(self.cloud_index))
             self.cloud1 = copy.deepcopy(self.cloud_base)
-
-            self.initFlag = False
+            write_point_cloud("/home/dylan2/catkin_ws/src/scanner/data/result/registerResult.pcd", self.cloud_base ,write_ascii = False)
+            if (self.rotation_dir_init_flag == True):
+                self.initFlag = False
 
     def registerLocalCloud(self, target, source):
         '''
@@ -86,6 +103,8 @@ class registerMulti:
         # print("target_temp: ",id(target_temp))
         # source_temp = source
         # target_temp = target
+        source_temp = voxel_down_sample(source_temp ,0.004)
+        target_temp = voxel_down_sample(target_temp ,0.004)
 
         estimate_normals(source_temp, search_param = KDTreeSearchParamHybrid(
             radius = 0.1, max_nn = 30))
@@ -111,7 +130,7 @@ class registerMulti:
 
         p2l_init_trans_guess = result_icp_p2l.transformation
         print("----------------")
-        print("Colored point cloud registration")
+        # print("Colored point cloud registration")
 
 ################
 #### testing registration
@@ -135,13 +154,24 @@ class registerMulti:
         #     current_transformation = result_icp.transformation
 
 #################
-##### original one
+#### original one
 #################
-        result_icp = registration_colored_icp(source_temp, target_temp,
-            0.001, p2l_init_trans_guess,
-            ICPConvergenceCriteria(relative_fitness = 1e-6,
-            relative_rmse = 1e-6, max_iteration = 50))
+        # result_icp = registration_colored_icp(source_temp, target_temp,
+        #     0.001, p2l_init_trans_guess,
+        #     ICPConvergenceCriteria(relative_fitness = 1e-6,
+        #     relative_rmse = 1e-6, max_iteration = 50))
 #################
+#################
+#################
+
+#################
+#### double nomral ICP
+#################
+        result_icp = registration_icp(source_temp, target_temp, 0.01,
+                p2l_init_trans_guess, TransformationEstimationPointToPlane())
+#         result_icp = registration_icp(source_temp, target_temp, 0.002,
+#                 p2l_init_trans_guess, TransformationEstimationPointToPlane(),ICPConvergenceCriteria(relative_fitness = 1e-6,relative_rmse = 1e-6, max_iteration = 50))
+# #################
 #################
 #################
 
@@ -181,14 +211,75 @@ class registerMulti:
 ######################################
 #####   kick-out rule
 ######################################
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        print(self.goodResultFlag)
-        if result_icp.fitness > -1:
-            self.goodResultFlag = True
-            return result_icp.transformation
-        else:
+#### New rule:
+#### 1/ rotation is out of plane (5 degree, or 0.087266 in radians);
+#### 2/ too big rotation;
+#### 3/ too big translation;
+
+# first calculate what is the rotation direction and rotation angle
+        tf = result_icp.transformation
+        R = tf[:3,:3]  # rotation matrix
+        so3mat = MatrixLog3(R)
+        omg = so3ToVec(so3mat)
+        R_dir, theta = AxisAng3(omg) # rotation direction
+                # rotation angle (in radians)
+        theta_degree = theta / np.pi * 180 # in degree
+        angle_with_pl_norm = self.cal_angle(self.rotation_dir, R_dir)
+
+        trans_tol= 0.5  # transformation tolerance
+        rotation_tol = 30 # 30 degrees
+        # angle_with_pl_norm_tol = 0.087266 # in radians (= 5 degrees)
+        # angle_with_pl_norm_tol = 0.174533 # in radians (= 10 degrees)
+        angle_with_pl_norm_tol = 0.35 # in radians (= 20 degrees)
+        if ( tf[0,3] > trans_tol or tf[0,3] < -trans_tol or \
+             tf[1,3] > trans_tol or tf[1,3] < -trans_tol or \
+             tf[2,3] > trans_tol or tf[2,3] < -trans_tol ):
             self.goodResultFlag = False
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            # print("here in 1 ")
+            rospy.logwarn('Something wrong with 1/ translation : (, turn back a little bit...')
+            rospy.logwarn('>> the translation is [{},{},{}]'.format(tf[0,3],tf[1,3],tf[2,3]))
             return np.identity(4)
+        elif ( theta_degree > rotation_tol or \
+               theta_degree < - rotation_tol):
+            self.goodResultFlag = False
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            # print("here in 2 ")
+            rospy.logwarn('Something wrong with 2/ rotation angle : (, turn back a little bit...')
+            rospy.logwarn('>> the rotation angle is {} (in degrees)'.format(theta_degree))
+            return np.identity(4)
+        elif ( angle_with_pl_norm > angle_with_pl_norm_tol):
+            self.goodResultFlag = False
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            print("here in 3 ")
+            print(" angle with pl norm")
+            print(angle_with_pl_norm)
+            rospy.logwarn('Something wrong with 3/ rotation axis : (, turn back a little bit...')
+            rospy.logwarn('>> the rotation axis is {} (in radians) with plane normal'.format(angle_with_pl_norm))
+            return np.identity(4)
+        else:
+            self.goodResultFlag = True
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            # print("here in 4 ")
+            return result_icp.transformation
+
+        # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        # print(self.goodResultFlag)
+
+        # if result_icp.fitness > -1:
+        #     self.goodResultFlag = True
+        #     return result_icp.transformation
+        # else:
+        #     self.goodResultFlag = False
+        #     return np.identity(4)
+
+    def cal_angle(self,pl_norm, R_dir):
+        angle_in_radians = \
+            np.arccos(
+                np.abs(pl_norm.x*R_dir[0]+ pl_norm.y*R_dir[1] + pl_norm.z*R_dir[2])
+                )
+
+        return angle_in_radians
 
 
 def main():
