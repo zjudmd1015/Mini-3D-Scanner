@@ -22,7 +22,7 @@ In this project, I explored to only use visual data (color images and range imag
 #### Overview
 I used a [Kinect V2](https://www.xbox.com/en-US/xbox-one/accessories/kinect) as the RGB-D camera for my pipeline, and use [ROS](http://www.ros.org/) framework to allow communication between hardware and software, as well as different programs.
 
-I used ROS package [iai_kinect2](https://github.com/code-iai/iai_kinect2) to do registration of range image and color image, and generate raw point cloud as input data of this 3D reconstruction pipeline.
+I used ROS package [iai_kinect2](https://github.com/code-iai/iai_kinect2) to drive the RGB-D camera, do registration of range image and color image, and generate raw point cloud as input data of this 3D reconstruction pipeline.
 
 The pipeline is divided into three major parts. I used [PCL](http://pointclouds.org/) to preprocessing raw point cloud and visualize registration process. For registration part, I used [Open3D](http://www.open3d.org/).
 
