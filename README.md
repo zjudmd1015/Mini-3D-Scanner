@@ -9,6 +9,10 @@
 
 _A simple demo of 3D reconstruction of a sneaker 'Kyrie4 CNY' with this pipeline. More examples see 'Demo' part._
 
+## Demo 
+
+Demo Video in Youtube: [Mini 3D-Scanner](https://youtu.be/WLWoPsRvhPE)
+
 ## Introduction
 
 The goal of this project is to develop a pipeline that can do online 3D reconstruction of small scale obejects, only using visual data from RGB-D camera.
@@ -94,6 +98,4 @@ Intsructions for use:
 2. Command `$ roslaunch scanner pipeline.launch` to run the pipeline.
 3. Intermediate PCD files are saved in **./data/** folder, and the final reconstruction PCD file is in **./data/result/** folder.
 
-## Demo
 
-Demo Video in Youtube: [Mini 3D-Scanner](https://youtu.be/WLWoPsRvhPE)
